@@ -1,0 +1,76 @@
+version: "3.9"
+
+# UI for monitoring DAGs (Directed Acylic Graph)
+services:
+  # NOTE: init-airflow must run first before webserver and scheduler
+  init-airflow:
+    image: apache/airflow:2.9.0
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: .env
+    command: >
+      bash -c "airflow db migrate && airflow users create --username airflow --password airflow --firstname admin --lastname user --role Admin --email admin@example.com && echo 'Init complete.' && exit 0"
+
+  airflow-webserver:
+    image: apache/airflow:2.9.0
+    command: webserver
+    env_file: .env # Load environment variables from .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      init-airflow:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./dags:/opt/airflow/dags # Where DAG python files live
+      - ./logs:/opt/airflow/logs # Airflow task logs
+      - ./plugins:/opt/airflow/plugins # Custom operators/hooks
+      - ./data:/opt/airflow/data # Medallion layers (Bronze/Silver/Gold)
+
+  # Runs Airflow scheduler process
+  airflow-scheduler:
+    image: apache/airflow:2.9.0
+    command: scheduler
+    env_file: .env
+    depends_on:
+      init-airflow:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
+
+  # Runs Postgres15 database
+  # Stores Airflow metadata (DAG runs, task states, logs, variables, connections)
+  postgres:
+    image: postgres:15
+    env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  # Runs DBT using the DuckDB adapter
+  dbt-runner:
+    build:
+      context: .
+      dockerfile: dbt-runner.Dockerfile
+    volumes:
+      - ./dbt:/usr/app/dbt
+      - ./data:/usr/app/data # Mounts /data so DBT can read/write Parquet files
+    working_dir: /usr/app/dbt # dbt run works out of the box
+
+# Persisted metadata
+volumes:
+  postgres_data:
