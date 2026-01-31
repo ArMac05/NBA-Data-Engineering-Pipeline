@@ -1,3 +1,23 @@
+# ------------------------------------------------------------------------------
+# Airflow + Postgres + dbt Orchestration Stack
+#
+# This docker-compose configuration sets up a local Airflow environment with:
+#   - An init container to run database migrations and create the admin user
+#   - Airflow webserver and scheduler services (v2.9.0)
+#   - A Postgres 15 metadata database with health checks
+#   - A dbt-runner container for executing dbt-duckdb transformations
+#
+# The stack mounts local directories for DAGs, logs, plugins, raw data
+# (Bronze/Silver/Gold), and source code. This enables rapid development,
+# reproducible ingestion, and a clean medallion architecture.
+#
+# Notes:
+#   - init-airflow must complete successfully before webserver/scheduler start
+#   - Postgres metadata is persisted via the `postgres_data` volume
+#   - dbt-runner uses a custom Dockerfile (dbt-runner.Dockerfile)
+#   - Airflow reads environment variables from `.env`
+# ------------------------------------------------------------------------------
+
 version: "3.9"
 
 # UI for monitoring DAGs (Directed Acylic Graph)
@@ -29,6 +49,7 @@ services:
       - ./logs:/opt/airflow/logs # Airflow task logs
       - ./plugins:/opt/airflow/plugins # Custom operators/hooks
       - ./data:/opt/airflow/data # Medallion layers (Bronze/Silver/Gold)
+      - ./src:/opt/airflow/src
 
   # Runs Airflow scheduler process
   airflow-scheduler:
@@ -45,6 +66,7 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - ./data:/opt/airflow/data
+      - ./src:/opt/airflow/src
 
   # Runs Postgres15 database
   # Stores Airflow metadata (DAG runs, task states, logs, variables, connections)
