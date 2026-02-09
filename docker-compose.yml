@@ -35,6 +35,8 @@ services:
 
   airflow-webserver:
     image: apache/airflow:2.9.0
+    environment:
+      - _PIP_ADDITIONAL_REQUIREMENTS=duckdb
     command: webserver
     env_file: .env # Load environment variables from .env
     ports:
@@ -49,11 +51,15 @@ services:
       - ./logs:/opt/airflow/logs # Airflow task logs
       - ./plugins:/opt/airflow/plugins # Custom operators/hooks
       - ./data:/opt/airflow/data # Medallion layers (Bronze/Silver/Gold)
-      - ./src:/opt/airflow/src
+      - ./src:/opt/airflow/src # Maps src code nodules
+      - ./dbt:/usr/app/dbt # Maps dbt project folder to dbt-runner container
+      - /var/run/docker.sock:/var/run/docker.sock # Allows the container to communicate with the Docker Daemon
 
   # Runs Airflow scheduler process
   airflow-scheduler:
     image: apache/airflow:2.9.0
+    environment:
+      - _PIP_ADDITIONAL_REQUIREMENTS=duckdb
     command: scheduler
     env_file: .env
     depends_on:
@@ -67,6 +73,8 @@ services:
       - ./plugins:/opt/airflow/plugins
       - ./data:/opt/airflow/data
       - ./src:/opt/airflow/src
+      - ./dbt:/usr/app/dbt
+      - /var/run/docker.sock:/var/run/docker.sock
 
   # Runs Postgres15 database
   # Stores Airflow metadata (DAG runs, task states, logs, variables, connections)
@@ -91,6 +99,8 @@ services:
     volumes:
       - ./dbt:/usr/app/dbt
       - ./data:/usr/app/data # Mounts /data so DBT can read/write Parquet files
+      - ~/.dbt:/root/.dbt
+
     working_dir: /usr/app/dbt # dbt run works out of the box
 
 # Persisted metadata

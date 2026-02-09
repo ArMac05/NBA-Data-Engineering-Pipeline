@@ -29,8 +29,8 @@ from dotenv import load_dotenv
 from .base_client import APIClient
 from .utils import load_checkpoint, save_checkpoint, get_current_nba_season
 
-CHECKPOINT_PATH = "/opt/airflow/data/bronze/cursor_games.txt"
-OUTPUT_PATH = "/opt/airflow/data/bronze/games_raw.json"
+CHECKPOINT_PATH = "/opt/airflow/data/checkpoints/cursor_games.txt"
+OUTPUT_PATH = "/opt/airflow/data/raw/games/games.json"
 
 def fetch_games():
     load_dotenv()

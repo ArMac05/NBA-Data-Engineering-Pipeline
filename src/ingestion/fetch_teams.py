@@ -22,8 +22,8 @@ from dotenv import load_dotenv
 from pathlib import Path
 from src.ingestion.base_client import APIClient
 
-CHECKPOINT_PATH = "/opt/airflow/data/bronze/cursor_teams.txt"
-OUTPUT_PATH = "/opt/airflow/data/bronze/teams_raw.json"
+CHECKPOINT_PATH = "/opt/airflow/data/checkpoints/cursor_teams.txt"
+OUTPUT_PATH = "/opt/airflow/data/raw/teams/teams.json"
 
 def fetch_teams():
     load_dotenv()

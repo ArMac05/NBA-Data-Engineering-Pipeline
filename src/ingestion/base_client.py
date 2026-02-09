@@ -22,6 +22,7 @@ Notes:
 
 
 import requests
+from requests.exceptions import SSLError, ConnectionError, Timeout, RequestException
 from typing import Optional
 from src.ingestion.utils import apply_backoff
 
@@ -39,9 +40,15 @@ class APIClient:
         retries = 0
 
         while True:
-            response = requests.get(url, headers=self.headers, params=params, timeout=10)
+            try: response = requests.get( url, headers=self.headers, params=params, timeout=10 ) 
+            except (SSLError, ConnectionError, Timeout) as e: 
+                # Network-level retryable errors 
+                retries = apply_backoff(retries, max_retries, label=f"Network error: {type(e).__name__}") 
+                continue 
+            except RequestException as e: 
+                # Non-retryable request errors r
 
-            # Success
+                raise Exception(f"Request failed: {e}")
             if response.status_code == 200:
                 return response.json()
 
