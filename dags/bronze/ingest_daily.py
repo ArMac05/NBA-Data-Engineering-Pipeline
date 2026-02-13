@@ -26,10 +26,9 @@ from airflow import DAG     # type: ignore
 from airflow.operators.python import PythonOperator # type: ignore
 from datetime import datetime
 from src.ingestion.fetch_games import fetch_games
-from src.ingestion.fetch_teams import fetch_teams
 
 with DAG(
-    dag_id="ingest_bronze",
+    dag_id="ingest_daily",
     start_date=datetime(2024, 1, 1),
     schedule_interval="@daily",
     catchup=False,
@@ -39,12 +38,3 @@ with DAG(
         task_id="fetch_games",
         python_callable=fetch_games
     )
-
-    # Ingest Teams
-    ingest_teams_task = PythonOperator(
-        task_id="fetch_teams",
-        python_callable=fetch_teams
-    )
-
-    # Order of run: teams first, then games
-    ingest_teams_task >> ingest_games_task  # type: ignore
