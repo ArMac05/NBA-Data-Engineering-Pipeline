@@ -49,7 +49,7 @@ def fetch_games():
     
     cursor = load_checkpoint(CHECKPOINT_PATH)
     all_games = []
-
+    
     while True:
         params = {
             "seasons[]": [season],

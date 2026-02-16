@@ -125,3 +125,4 @@ def enforce_schema(df, schema: dict):
             enforced[col] = pd.to_datetime(enforced[col]).dt.date
 
     return enforced
+
