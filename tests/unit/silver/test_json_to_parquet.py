@@ -65,7 +65,7 @@ def test_json_to_parquet(tmp_path):
     parquet_file = tmp_path / "output.parquet"
 
     # --- Act ---
-    json_to_parquet(json_file, parquet_file)
+    json_to_parquet(json_file, parquet_file, Schemas.GAMES)
     # --- Assert ---
     # 1. Parquet file exists
     assert parquet_file.exists()
@@ -84,5 +84,7 @@ def test_json_to_parquet(tmp_path):
     assert row["visitor_team_abbreviation"] == "HOU"
 
     # 5. Schema enforcement: all expected columns exist
-    for col in Schemas.GAMES:
+    expected_cols = [c for c in Schemas.GAMES if c != "__root__"]
+    for col in expected_cols:
         assert col in df.columns
+

@@ -7,7 +7,7 @@ def test_bronze_to_silver(tmp_path, monkeypatch):
     bronze_games = tmp_path / "bronze" / "games"
     bronze_games.mkdir(parents=True)
 
-    data = {"id": 1, "team": {"name": "Lakers"}}
+    data = {"id": 1, "home_team": {"name": "Lakers"}}
     json_file = bronze_games / "game1.json"
     with open(json_file, "w") as f:
         json.dump(data, f)
@@ -25,4 +25,4 @@ def test_bronze_to_silver(tmp_path, monkeypatch):
 
     df = duckdb.read_parquet(str(files[0])).df()
     rows = df.to_dict(orient="records")
-    assert rows[0]["team.name"] == "Lakers"
+    assert rows[0]["home_team_name"] == "Lakers"

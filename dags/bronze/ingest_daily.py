@@ -1,7 +1,7 @@
 """
 Airflow DAG for ingesting NBA game data into the Bronze layer.
 
-This DAG triggers the `fetch_games` ingestion task, which retrieves
+This DAG triggers the daily ingestion tasks, which retrieves
 current-season NBA game data from the BallDontLie API using cursor-based
 pagination and writes raw JSON output to the Bronze storage path.
 
@@ -10,7 +10,7 @@ Schedule:
     - No backfilling (`catchup=False`)
 
 Notes:
-    - The ingestion logic is implemented in `src.ingestion.fetch_games`.
+    - The ingestion logic is implemented in `src.ingestion.`.
     - Checkpointing ensures incremental ingestion and safe restarts.
     - `/opt/airflow` is added to PYTHONPATH so the `src` package is discoverable.
 """

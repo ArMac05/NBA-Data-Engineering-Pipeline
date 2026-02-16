@@ -4,7 +4,7 @@ import duckdb
 from src.silver.schema import Schemas
 from src.silver.utils import normalize_json, clean_data, enforce_schema
 
-def test_normalize_json(tmp_path):
+def test_normalize_json(tmp_path, schema):
     sample = {
         "id": 18446819,
         "date": "2025-10-21",
@@ -59,7 +59,8 @@ def test_normalize_json(tmp_path):
     json_file = tmp_path / "data.json"
     json_file.write_text(json.dumps(sample))
 
-    rows = normalize_json(json_file)
+    root_name = schema["__root__"]
+    rows = normalize_json(json_file, root_name)
 
     assert len(rows) == 1
     row = rows[0]

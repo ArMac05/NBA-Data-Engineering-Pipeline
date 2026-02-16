@@ -1,4 +1,3 @@
-# Ingest Teams
 """
 Airflow DAG for ingesting NBA game data into the Bronze layer.
 

@@ -1,3 +1,20 @@
+"""
+Airflow DAG for transforming json files into parquet files.
+
+This DAG triggers transformation task for the silver medallion, which
+normalize json files, clean, and enforcing shemas before converting to 
+parquet files.
+
+Schedule:
+    - Runs daily at midnight (UTC by Airflow default)
+    - No backfilling (`catchup=False`)
+
+Notes:
+    - The ingestion logic is implemented in `src.silver.`.
+    - Checkpointing ensures incremental ingestion and safe restarts.
+    - `/opt/airflow` is added to PYTHONPATH so the `src` package is discoverable.
+"""
+
 from airflow import DAG # type: ignore
 from airflow.decorators import task # type: ignore
 from airflow.sensors.external_task import ExternalTaskSensor # type: ignore

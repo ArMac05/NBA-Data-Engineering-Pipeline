@@ -1,5 +1,23 @@
+"""
+schema.py
+
+Defines strict Silver-layer schemas for normalized NBA data.
+
+This module:
+    - Provides explicit column names and DuckDB-friendly data types
+    - Serves as the single source of truth for Silver-layer tables
+    - Ensures downstream transformations (json_to_parquet, bronze_to_silver)
+      enforce consistent structure and typing
+    - Supports reproducible analytics and dbt modeling
+
+Notes:
+    - GAMES_SCHEMA corresponds to the flattened, cleaned structure of the
+      BallDontLie 'games' endpoint
+    - Additional schemas can be added as needed
+"""
 
 GAMES_SCHEMA = {
+    "__root__": "game",
     "game_id": "BIGINT",
     "date": "DATE",
     "season": "INTEGER",
@@ -60,5 +78,17 @@ GAMES_SCHEMA = {
     "cleaned_at": "TIMESTAMP"
 }
 
+TEAMS_SCHEMA = {
+    "__root__": "team",
+    "team_id": "BIGINT",
+    "conference": "VARCHAR",
+    "division": "VARCHAR",
+    "city": "VARCHAR",
+    "name": "VARCHAR",
+    "full_name": "VARCHAR",
+    "abbreviation": "VARCHAR"
+}
+
 class Schemas:
     GAMES = GAMES_SCHEMA
+    TEAMS = TEAMS_SCHEMA
