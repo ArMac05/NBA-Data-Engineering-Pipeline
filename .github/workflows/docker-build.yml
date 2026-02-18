@@ -1,0 +1,40 @@
+# GitHub Actions Workflow: Build Docker Images
+# This workflow builds and tags Docker images when you create a GitHub release tag.
+# Useful for building the dbt-runner container for Airflow orchestration.
+
+name: Build Docker Images
+
+# Trigger conditions
+on:
+  # Trigger when you create a git tag matching v* (e.g., v1.0.0, v1.2.3)
+  push:
+    tags: ["v*"]
+  # Allow manual trigger from the GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  # Job: Build and save Docker images
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Download the repository code
+      - uses: actions/checkout@v4
+
+      # Step 2: Set up Docker Buildx for advanced build features
+      # (multi-platform builds, caching, better performance)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Step 3: Build the dbt-runner Docker image from the Dockerfile
+      - name: Build dbt-runner image
+        uses: docker/build-push-action@v5
+        with:
+          # Build context (root directory with Dockerfile)
+          context: .
+          # Path to the Dockerfile
+          file: ./dbt-runner.Dockerfile
+          # Image name and tag (for later reference)
+          tags: nba-dbt-runner:latest
+          # Save as a local tar file instead of pushing to registry
+          # (change to push: true and add registry credentials to push to DockerHub/ECR)
+          outputs: type=docker,dest=/tmp/image.tar

@@ -1,0 +1,41 @@
+# GitHub Actions Workflow: dbt Validation
+# This workflow validates all dbt transformations whenever code changes are pushed.
+# It ensures dbt models are syntactically correct and all data quality tests pass.
+
+name: dbt Validation
+
+# Trigger conditions
+on:
+  push:
+    # Only run when dbt/ or src/ folders change (not on every push)
+    paths:
+      - "dbt/**"
+      - "src/**"
+
+jobs:
+  # Job: Run dbt parse, models, and tests
+  dbt-check:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Download the repository code
+      - uses: actions/checkout@v4
+
+      # Step 2: Install Python 3.11
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # Step 3: Install required dependencies (dbt-duckdb for DuckDB support)
+      - name: Install dbt
+        run: pip install -r requirements.txt
+
+      # Step 4: Run dbt transformations and validate data quality
+      - name: dbt run & test
+        run: |
+          cd dbt
+          # Parse dbt project to check syntax
+          dbt parse --profiles-dir .
+          # Execute all dbt models (Bronze → Silver → Gold)
+          dbt run --target dev --profiles-dir .
+          # Run all data quality tests (unique, not null, relationships, etc.)
+          dbt test --profiles-dir .

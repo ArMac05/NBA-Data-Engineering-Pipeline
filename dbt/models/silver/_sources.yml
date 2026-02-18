@@ -1,0 +1,8 @@
+sources:
+  - name: silver
+    schema: main
+    tables:
+      - name: games
+        external:
+          location: "/usr/app/data/silver/games/*.parquet"
+          format: parquet

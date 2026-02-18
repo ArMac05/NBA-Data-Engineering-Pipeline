@@ -96,6 +96,7 @@ services:
     build:
       context: .
       dockerfile: dbt-runner.Dockerfile
+    command: ["tail", "-f", "/dev/null"]
     volumes:
       - ./dbt:/usr/app/dbt
       - ./data:/usr/app/data # Mounts /data so DBT can read/write Parquet files
