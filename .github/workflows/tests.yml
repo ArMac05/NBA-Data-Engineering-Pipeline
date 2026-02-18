@@ -26,5 +26,5 @@ jobs:
       - name: dbt parse & test
         run: |
           cd dbt
-          dbt parse
-          dbt test
+          dbt parse --profiles-dir .
+          dbt test --profiles-dir .
