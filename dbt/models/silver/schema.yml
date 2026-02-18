@@ -2,7 +2,7 @@ models:
   - name: silver_games
     description: "Cleaned game data from bronze layer"
     columns:
-      - name: id
+      - name: game_id
         description: "Game ID"
         tests:
           - unique
