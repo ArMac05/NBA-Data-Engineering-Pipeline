@@ -42,6 +42,8 @@ jobs:
       - name: dbt parse & test
         run: |
           cd dbt
+          # Clean cached compiled files to avoid stale test names
+          dbt clean --profiles-dir .
           # Parse dbt project syntax and dependencies (catches errors early)
           dbt parse --profiles-dir .
           # Run all dbt tests (unique, not null, relationships, custom tests)

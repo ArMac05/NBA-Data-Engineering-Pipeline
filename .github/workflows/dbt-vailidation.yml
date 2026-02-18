@@ -33,6 +33,8 @@ jobs:
       - name: dbt run & test
         run: |
           cd dbt
+          # Clean cached compiled files to avoid stale test names
+          dbt clean --profiles-dir .
           # Parse dbt project to check syntax
           dbt parse --profiles-dir .
           # Execute all dbt models (Bronze → Silver → Gold)
