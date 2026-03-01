@@ -10,3 +10,11 @@ models:
       - name: date
         tests:
           - not_null
+
+models:
+  - name: dim_teams
+    columns:
+      - name: team_sk
+        tests:
+          - unique
+          - not_null

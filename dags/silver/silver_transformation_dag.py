@@ -49,3 +49,4 @@ with DAG(
     # Dependencies - call the task and set dependency
     transform_task = run_bronze_to_silver()
     wait_for_ingest_daily >> transform_task # type: ignore
+    

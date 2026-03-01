@@ -86,7 +86,10 @@ TEAMS_SCHEMA = {
     "city": "VARCHAR",
     "name": "VARCHAR",
     "full_name": "VARCHAR",
-    "abbreviation": "VARCHAR"
+    "abbreviation": "VARCHAR",
+
+    # Metadata
+    "cleaned_at": "TIMESTAMP"
 }
 
 class Schemas:

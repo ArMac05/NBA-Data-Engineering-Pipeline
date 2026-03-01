@@ -68,8 +68,9 @@ def clean_data(df: pd.DataFrame):
     - Add time stamp of when data was cleaned
     """
     # Trim whitespaces
-    str_cols = df.select_dtypes(include=["object", "string"]).columns 
-    df[str_cols] = df[str_cols].apply(lambda col: col.str.strip())
+    str_cols = df.select_dtypes(include=["object", "string"]).columns
+    # Ensure columns are string-like before using .str accessor
+    df[str_cols] = df[str_cols].apply(lambda col: col.astype("string").str.strip())
 
     # Convert empty strings to None
     df = df.replace({"": None})

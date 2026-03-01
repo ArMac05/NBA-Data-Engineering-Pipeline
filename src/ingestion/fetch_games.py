@@ -54,7 +54,7 @@ def fetch_games():
         params = {
             "seasons[]": [season],
             "end_date": str(date.today()),
-            "per_page": 100
+            "per_page": 100,
         }
         if cursor:
             params["cursor"] = cursor
@@ -65,12 +65,14 @@ def fetch_games():
         if not page.get("data"): 
             break
 
-        all_games.extend(page["data"])
+        final_games = [game for game in page["data"] if game.get("time") == "Final"]
+        all_games.extend(final_games)
+
 
         cursor = page["meta"].get("next_cursor")
         save_checkpoint(CHECKPOINT_PATH, cursor or "")
 
-        print(f"Fetched {len(page['data'])} games... total so far: {len(all_games)}")
+        print(f"Fetched {len(final_games)} final games... total so far: {len(all_games)}")
 
         if cursor is None:
             break

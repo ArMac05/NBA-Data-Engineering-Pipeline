@@ -6,3 +6,7 @@ sources:
         external:
           location: "/usr/app/data/silver/games/*.parquet"
           format: parquet
+      - name: teams
+        external:
+          location: "/usr/app/data/silver/teams/*.parquet"
+          format: parquet
