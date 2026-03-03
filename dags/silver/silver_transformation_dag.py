@@ -37,7 +37,7 @@ with DAG(
         external_task_id="fetch_games",
         mode="reschedule",
         poke_interval=30,
-        timeout=60 * 60,
+        timeout=2 * 60 * 60,
         allowed_states=['success'],
         check_existence=True,
     )

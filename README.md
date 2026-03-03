@@ -1,48 +1,47 @@
 # NBA-Data-Engineering-Pipeline
 
-## 🎯 Overview
+## Overview
 
 This project builds a modern, end‑to‑end data pipeline that ingests NBA data from a public API, processes it through a Medallion Architecture (Bronze → Silver → Gold), and produces analytics‑ready datasets for dashboards and insights. The entire system is orchestrated with Airflow, transformed with dbt, stored in Parquet/DuckDB, and fully containerized with Docker.
 
-## 🏀 Data Ingestion (NBA API → Bronze Layer)
+## Data Ingestion (NBA API -> Bronze Layer)
 
-- Extract raw NBA data (games, players, teams, stats) from a public API
+- Extract raw NBA data (games and teams) from a public API
 - Handle pagination, rate limits, retries, and ingestion failures
-- Store raw JSON/Parquet files in the Bronze layer
+- Store raw JSON files in the Bronze layer
 - Automate ingestion using Airflow DAGs
 
-## 🧹 Data Cleaning & Normalization (Bronze → Silver)
+## Data Cleaning & Normalization (Bronze -> Silver)
 
-- Convert raw API responses into structured, relational tables (Parquet/Delta)
+- Convert raw API responses into structured, relational tables (Parquet)
 - Clean and normalize nested JSON fields
 - Enforce data types and schema consistency
 - Implement dbt tests (unique, not null, relationships)
 - Store cleaned datasets in the Silver layer
 
-## 📊 Data Modeling & Analytics (Silver → Gold)
+## Data Modeling & Analytics (Silver -> Gold)
 
-- Build dimensional models (players, teams)
-- Create fact tables (games, player stats)
+- Build dimensional models (teams)
+- Create fact tables (team metrics)
 - Develop aggregated analytics models (win rates, performance metrics)
 - Store analytics‑ready tables in the Gold layer
 
-## ⚙️ Orchestration & Automation
+## Orchestration & Automation
 
 - Use Airflow to orchestrate ingestion and dbt transformations
-- Implement DAG dependencies (Bronze → Silver → Gold)
+- Implement DAG dependencies (Bronze -> Silver -> Gold)
 - Add retries, logging, and monitoring
 - Schedule the pipeline for automated execution
 
-## 📈 Analytics & Visualization
+## Analytics & Visualization
 
 - Query Gold layer using DuckDB
-- Build dashboards (Power BI/Tableau) for:
-- Player performance trends
+- Build dashboards (Power BI) for:
 - Team analytics
 - Season summaries
 - Export visuals for documentation
 
-## 🚫 Out of Scope (for this project)
+## Out of Scope (for this project)
 
 To keep the project focused and maintainable, the following are excluded:
 
@@ -50,9 +49,7 @@ To keep the project focused and maintainable, the following are excluded:
 - Cloud deployment (Databricks, AWS, GCP, Azure)
 - Machine learning models
 - Real‑time dashboards
-- API serving layers
-
-(These will be part of a separate Databricks cloud pipeline project.)
+- API serving layer
 
 ## ✅ Success Criteria
 
