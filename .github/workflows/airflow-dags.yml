@@ -38,4 +38,4 @@ jobs:
           # - All imports resolve correctly
           # - DAGs can be loaded by the scheduler
           # - No circular dependencies or logical errors
-          airflow dags list --dag-folder dags/
+          airflow dags list
