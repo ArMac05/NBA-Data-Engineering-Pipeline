@@ -1,20 +1,59 @@
-models:
-  - name: silver_games
-    description: "Cleaned game data from bronze layer"
-    columns:
-      - name: game_id
-        description: "Game ID"
-        tests:
-          - unique
-          - not_null
-      - name: date
-        tests:
-          - not_null
+version: 2
 
 models:
-  - name: dim_teams
+  - name: silver_games
+    description: "Flattened, cleaned game data"
     columns:
-      - name: team_sk
-        tests:
-          - unique
-          - not_null
+      - name: game_id
+        tests: [unique, not_null]
+      - name: date
+        tests: [not_null]
+      - name: home_team_id
+        tests: [not_null]
+      - name: visitor_team_id
+        tests: [not_null]
+
+  - name: silver_teams
+    description: "Flattened team metadata"
+    columns:
+      - name: team_id
+        tests: [unique, not_null]
+      - name: name
+        tests: [not_null]
+
+  - name: fact_game
+    description: "One row per game"
+    columns:
+      - name: game_id
+        tests: [unique, not_null]
+      - name: home_team_id
+        tests: [not_null]
+      - name: visitor_team_id
+        tests: [not_null]
+
+  - name: fact_game_team
+    description: "One row per team per game"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [game_id, team_id]
+    columns:
+      - name: game_id
+        tests: [not_null]
+      - name: team_id
+        tests: [not_null]
+      - name: points_scored
+        tests: [not_null]
+
+  - name: dim_teams
+    description: "Team dimension"
+    columns:
+      - name: team_id
+        tests: [unique, not_null]
+
+  - name: dim_date
+    description: "Calendar dimension"
+    columns:
+      - name: date
+        tests: [unique, not_null]
+      - name: season
+        tests: [not_null]

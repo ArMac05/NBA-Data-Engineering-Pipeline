@@ -36,7 +36,7 @@ with DAG(
         external_dag_id="ingest_daily",
         external_task_id="fetch_games",
         mode="reschedule",
-        poke_interval=30,
+        poke_interval=10,
         timeout=2 * 60 * 60,
         allowed_states=['success'],
         check_existence=True,
