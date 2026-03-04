@@ -1,0 +1,107 @@
+-- -- Each teams stats (W-L)
+
+-- WITH CTE_home_wins AS (
+--     SELECT 
+--         g.home_team_id,
+--         COUNT(*) AS home_wins
+--     FROM {{ ref('silver_games') }} g
+--     WHERE g.home_team_score > g.visitor_team_score
+--     GROUP BY g.home_team_id
+-- ),
+
+-- CTE_home_losses AS (
+--     SELECT 
+--         g.home_team_id,
+--         COUNT(*) AS home_losses,
+--         FROM {{ ref('silver_games') }} G
+--         WHERE g.home_team_score < g.visitor_team_score
+--         GROUP BY g.home_team_id
+-- ),
+
+-- CTE_away_wins AS (
+--     SELECT 
+--         g.visitor_team_id,
+--         COUNT(*) AS away_wins,
+--     FROM {{ ref('silver_games') }} g
+--     WHERE g.visitor_team_score > g.home_team_score
+--     GROUP BY g.visitor_team_id
+-- ),
+
+-- CTE_away_losses AS (
+--     SELECT 
+--         g.visitor_team_id,
+--         COUNT(*) AS away_losses,
+--     FROM {{ ref('silver_games') }} g
+--     WHERE g.visitor_team_score < g.home_team_score
+--     GROUP BY g.visitor_team_id
+-- ),
+-- CTE_ppg AS (
+--     SELECT 
+--         team_id,
+--         ROUND(CAST(SUM(total_points) AS DECIMAL) / SUM(total_games), 1) AS ppg
+--     FROM (
+--         SELECT 
+--             home_team_id AS team_id,
+--             SUM(home_team_score) AS total_points,
+--             COUNT(*) AS total_games
+--         FROM {{ ref('silver_games') }} g
+--         GROUP BY home_team_id
+        
+--         UNION ALL
+        
+--         SELECT 
+--             visitor_team_id AS team_id,
+--             SUM(visitor_team_score) AS total_points,
+--             COUNT(*) AS total_games
+--         FROM {{ ref('silver_games') }} g
+--         GROUP BY visitor_team_id
+--     ) combined
+--     GROUP BY team_id
+-- ),
+-- CTE_oppg AS (
+--     SELECT 
+--         team_id,
+--         ROUND(CAST(SUM(opponent_points) AS DECIMAL) / SUM(total_games), 1) AS opp_ppg
+--     FROM (
+--         SELECT 
+--             home_team_id AS team_id,
+--             SUM(visitor_team_score) AS opponent_points,
+--             COUNT(*) AS total_games
+--         FROM {{ ref('silver_games') }} g
+--         GROUP BY home_team_id
+        
+--         UNION ALL
+        
+--         SELECT 
+--             visitor_team_id AS team_id,
+--             SUM(home_team_score) AS opponent_points,
+--             COUNT(*) AS total_games
+--         FROM {{ ref('silver_games') }} g
+--         GROUP BY visitor_team_id
+--     ) combined
+--     GROUP BY team_id
+-- )
+
+-- SELECT 
+--     t.team_id,
+--     t.name,
+--     COALESCE(hw.home_wins, 0) + COALESCE(aw.away_wins, 0) AS wins,
+--     COALESCE(hl.home_losses, 0) + COALESCE(al.away_losses, 0) AS losses,
+--     ROUND(CAST((wins / (wins + losses)) AS DECIMAL), 3) AS pct,
+--     CONCAT(COALESCE(hw.home_wins, 0), '-', COALESCE(hl.home_losses)) AS home,
+--     CONCAT(COALESCE(aw.away_wins, 0), '-', COALESCE(al.away_losses)) AS away,
+--     pp.ppg,
+--     op.opp_ppg, 
+--     ROUND((pp.ppg - op.opp_ppg), 1) AS diff,
+--     CONCAT(
+--         COALESCE(hw.home_wins, 0) + COALESCE(aw.away_wins, 0), 
+--         '-', 
+--         COALESCE(hl.home_losses, 0) + COALESCE(al.away_losses, 0)
+--     ) AS win_loss_record
+-- FROM {{ ref('dim_teams') }} t
+-- LEFT JOIN CTE_home_wins hw ON t.team_id = hw.home_team_id
+-- LEFT JOIN CTE_home_losses hl ON t.team_id = hl.home_team_id
+-- LEFT JOIN CTE_away_wins aw ON t.team_id = aw.visitor_team_id
+-- LEFT JOIN CTE_away_losses al ON t.team_id = al.visitor_team_id
+-- LEFT JOIN CTE_ppg pp ON t.team_id = pp.team_id
+-- LEFT JOIN CTE_oppg op ON t.team_id = op.team_id
