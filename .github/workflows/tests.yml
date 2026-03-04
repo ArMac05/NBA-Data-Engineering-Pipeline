@@ -31,13 +31,16 @@ jobs:
       - name: Run pytest
         run: pytest --cov=src tests/
 
+      - name: dbt clean
+        working-directory: ./dbt
+        run: dbt clean --profiles-dir .
+
       - name: Install dbt packages
         working-directory: ./dbt
         run: dbt deps --profiles-dir .
 
-      - name: dbt parse & test
+      - name: parse, and test
         working-directory: ./dbt
         run: |
-          dbt clean --profiles-dir .
           dbt parse --profiles-dir .
           dbt test --profiles-dir .
