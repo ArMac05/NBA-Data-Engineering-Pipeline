@@ -4,38 +4,26 @@
 
 name: Airflow DAG Validation
 
-# Trigger conditions
 on:
-  # Only run when files in dags/ folder change (not on every push to save CI/CD minutes)
   push:
     paths:
       - "dags/**"
 
 jobs:
-  # Job: Validate all Airflow DAG definitions
   validate:
     runs-on: ubuntu-latest
+
     steps:
-      # Step 1: Download the repository code
       - uses: actions/checkout@v4
 
-      # Step 2: Install Python 3.11 runtime environment
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      # Step 3: Install Apache Airflow CLI and dependencies
-      - name: Install Airflow
-        run: pip install apache-airflow
+      - name: Install Airflow (match Docker version)
+        run: pip install "apache-airflow==2.9.0"
 
-      # Step 4: Validate all DAG files
       - name: Validate DAGs
         run: |
-          # Python -m py_compile: Checks Python syntax of all DAG files
-          # (catches typos, import errors, syntax errors before deployment)
           python -m py_compile dags/*.py
-          # airflow dag list: Runs Airflow's DAG parser to verify:
-          # - All imports resolve correctly
-          # - DAGs can be loaded by the scheduler
-          # - No circular dependencies or logical errors
           airflow dags list
