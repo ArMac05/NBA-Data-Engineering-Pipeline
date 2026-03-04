@@ -14,38 +14,30 @@ on:
     branches: [main, develop]
 
 jobs:
-  # Job: Run all tests and validations
   test:
     runs-on: ubuntu-latest
+
     steps:
-      # Step 1: Download the repository code
       - uses: actions/checkout@v4
 
-      # Step 2: Install Python 3.11 runtime environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      # Step 3: Install all project dependencies from requirements.txt
-      # Includes: pytest, pytest-cov, duckdb, dbt-duckdb, pandas, pytz, python-dotenv
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # Step 4: Run pytest with code coverage analysis
-      # Tests all files in tests/ directory
-      # --cov=src generates coverage report for src/ module
       - name: Run pytest
         run: pytest --cov=src tests/
 
-      # Step 5: Validate dbt project and run data quality tests
+      - name: Install dbt packages
+        working-directory: ./dbt
+        run: dbt deps --profiles-dir .
+
       - name: dbt parse & test
+        working-directory: ./dbt
         run: |
-          cd dbt
-          # Clean cached compiled files to avoid stale test names
           dbt clean --profiles-dir .
-          # Parse dbt project syntax and dependencies (catches errors early)
           dbt parse --profiles-dir .
-          # Run all dbt tests (unique, not null, relationships, custom tests)
-          # This validates data quality in Bronze → Silver → Gold layers
           dbt test --profiles-dir .
