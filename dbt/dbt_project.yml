@@ -41,3 +41,6 @@ models:
 
       facts:
         +materialized: table
+
+      +post-hook:
+        - "{{ export_to_parquet(this) }}"

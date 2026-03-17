@@ -8,6 +8,6 @@ SELECT
     name,
     full_name,
     abbreviation,
-    cleaned_at AS loaded_at
-FROM read_parquet('../data/silver/teams/*.parquet')
-WHERE team_id IS NOT NULL
+    loaded_at
+FROM {{ ref('silver_teams') }}
+WHERE city IS NOT NULL

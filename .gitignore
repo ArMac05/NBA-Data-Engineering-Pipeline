@@ -210,3 +210,4 @@ __marimo__/
 *.duckdb
 *.duckdb.wal
 
+.DS_Store

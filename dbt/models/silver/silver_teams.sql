@@ -12,4 +12,4 @@ SELECT
     abbreviation,
     cleaned_at AS loaded_at
 from read_parquet('../data/silver/teams/*.parquet')
-where team_id is not null
+where city is not null
