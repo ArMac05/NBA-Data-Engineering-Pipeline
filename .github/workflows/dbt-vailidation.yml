@@ -18,10 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Step 1: Download the repository code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Step 2: Install Python 3.11
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -35,6 +35,8 @@ jobs:
           cd dbt
           # Clean cached compiled files to avoid stale test names
           dbt clean --profiles-dir .
+          # Install package dependencies
+          dbt deps --profiles-dir .
           # Parse dbt project to check syntax
           dbt parse --profiles-dir .
           # Execute all dbt models (Bronze → Silver → Gold)
